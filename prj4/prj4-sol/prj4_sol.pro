@@ -198,18 +198,18 @@ test(unbound_key, [nondet]) :-
 
 % assoc_replace(_AtomIntList, _Assoc, _ListZ) :- 'TODO'.
 
-assoc_replace([], _Assoc, []). % Base case: replacing an empty list results in an empty list.
+assoc_replace([], _Assoc, []). 
 
-% If the head of AtomIntList is an atom, replace it with its corresponding value in Assoc.
+
 assoc_replace([Head | Tail], Assoc, [Value | TailZ]) :-
-    atom(Head), % Check if the head is an atom
-    assoc_lookup(Assoc, Head, Value), % Look up the value of the atom in the association list
-    assoc_replace(Tail, Assoc, TailZ). % Recursively process the tail of the list
+    atom(Head), 
+    assoc_lookup(Assoc, Head, Value), 
+    assoc_replace(Tail, Assoc, TailZ). 
 
-% If the head of AtomIntList is an integer, keep it unchanged.
+
 assoc_replace([Head | Tail], Assoc, [Head | TailZ]) :-
-    integer(Head), % Check if the head is an integer
-    assoc_replace(Tail, Assoc, TailZ). % Recursively process the tail of the list
+    integer(Head), 
+    assoc_replace(Tail, Assoc, TailZ). 
 
 :-begin_tests(assoc_replace, []).
 test(empty, [nondet]) :-
@@ -457,13 +457,13 @@ test(rev_mul_add_1_2_mul_3_4, [nondet]) :-
 % named_expr_eval(_NamedExpr, _Value) :- 'TODO'.
 
 named_expr_eval(NamedExpr, Value) :-
-    (   integer(NamedExpr) -> % If NamedExpr is an integer, Value is the integer itself
+    (   integer(NamedExpr) -> 
         Value = NamedExpr
-    ;   NamedExpr = add(X, Y) -> % If NamedExpr is of the form add(X, Y), recursively evaluate X and Y and sum them
+    ;   NamedExpr = add(X, Y) -> 
         named_expr_eval(X, XValue),
         named_expr_eval(Y, YValue),
         Value is XValue + YValue
-    ;   NamedExpr = mul(X, Y) -> % If NamedExpr is of the form mul(X, Y), recursively evaluate X and Y and multiply them
+    ;   NamedExpr = mul(X, Y) -> 
         named_expr_eval(X, XValue),
         named_expr_eval(Y, YValue),
         Value is XValue * YValue
@@ -517,14 +517,14 @@ test(mul_add_1_2_mul_3_4, [nondet]) :-
 % named_expr_to_prefix_tokens(_NamedExpr, _PrefixTokens) :- 'TODO'.
 
 named_expr_to_prefix_tokens(NamedExpr, PrefixTokens) :-
-    (   integer(NamedExpr) -> % If NamedExpr is an integer, return a list containing only that integer
+    (   integer(NamedExpr) -> 
         PrefixTokens = [NamedExpr]
-    ;   NamedExpr = add(X, Y) -> % If NamedExpr is of the form add(X, Y), recursively convert X and Y to prefix tokens and append them with 'add'
+    ;   NamedExpr = add(X, Y) -> 
         named_expr_to_prefix_tokens(X, XTokens),
         named_expr_to_prefix_tokens(Y, YTokens),
         append([add], XTokens, Temp),
         append(Temp, YTokens, PrefixTokens)
-    ;   NamedExpr = mul(X, Y) -> % If NamedExpr is of the form mul(X, Y), recursively convert X and Y to prefix tokens and append them with 'mul'
+    ;   NamedExpr = mul(X, Y) -> 
         named_expr_to_prefix_tokens(X, XTokens),
         named_expr_to_prefix_tokens(Y, YTokens),
         append([mul], XTokens, Temp),
@@ -591,14 +591,14 @@ test(mul_add_1_2_mul_3_4, [nondet]) :-
 % op_expr_to_prefix_tokens(_OpExpr, _PrefixTokens) :- 'TODO'.
 
 op_expr_to_prefix_tokens(OpExpr, PrefixTokens) :-
-    (   integer(OpExpr) -> % If OpExpr is an integer, return a list containing only that integer
+    (   integer(OpExpr) ->
         PrefixTokens = [OpExpr]
-    ;   OpExpr = +(X, Y) -> % If OpExpr is of the form +(X, Y), recursively convert X and Y to prefix tokens and append them with '+'
+    ;   OpExpr = +(X, Y) -> 
         named_expr_to_prefix_tokens(X, XTokens),
         named_expr_to_prefix_tokens(Y, YTokens),
         append([+], XTokens, Temp),
         append(Temp, YTokens, PrefixTokens)
-    ;   OpExpr = *(X, Y) -> % If OpExpr is of the form *(X, Y), recursively convert X and Y to prefix tokens and append them with '*'
+    ;   OpExpr = *(X, Y) -> 
         named_expr_to_prefix_tokens(X, XTokens),
         named_expr_to_prefix_tokens(Y, YTokens),
         append([*], XTokens, Temp),
