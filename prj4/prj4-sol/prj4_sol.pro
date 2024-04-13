@@ -23,9 +23,13 @@
 % as List and whose elements are the lengths of the corresponding
 % sub-list in List.  You may assume that all the elements of List
 % are sub-lists.
-sublist_lengths(_List, _Lengths) :- 'TODO'.
+% sublist_lengths(_List, _Lengths) :- 'TODO'.
+sublist_lengths([], []).
+sublist_lengths([Sublist|Rest], [Length|Lengths]) :-
+    length(Sublist, Length),
+    sublist_lengths(Rest, Lengths).
 
-:-begin_tests(sublist_lengths, [blocked('TODO')]).
+:-begin_tests(sublist_lengths, []).
 test(empty, [nondet]) :-
     sublist_lengths([], Lengths), Lengths = [].
 test(sublist_lengths1, [nondet]) :-
@@ -45,9 +49,20 @@ test(sublist_lengths_var_list, [nondet]) :-
 % List are sub-lists.  The procedure should succeed for an empty List.
 %
 % *Hint*: use an auxiliary procedure.
-same_length_sublists(_List) :- 'TODO'.
+% same_length_sublists(_List) :- 'TODO'.
+same_length_sublists([]).
+same_length_sublists([[]|Rest]) :- same_length_sublists(Rest).
+same_length_sublists([List|Rest]) :-
+    List \= [],
+    length(List, Length),
+    sublist_lengths(Rest, Length).
 
-:-begin_tests(same_length_sublists, [blocked('TODO')]).
+sublist_lengths([], _).
+sublist_lengths([Sublist|Rest], Length) :-
+    length(Sublist, Length),
+    sublist_lengths(Rest, Length).
+
+:-begin_tests(same_length_sublists, []).
 test(empty, [nondet]) :-
     same_length_sublists([]).
 test(empties, [nondet]) :-
@@ -75,9 +90,20 @@ test(sublists3_fail, [fail]) :-
 % where List[i] is the sublist at index i in List.  You may
 % assume that List contains only sublists.  The procedure
 % should trivially succeed if the length of List is < 3.
-fibonacci_sublists(_List) :- 'TODO'.
+% fibonacci_sublists(_List) :- 'TODO'.
 
-:-begin_tests(fibonacci_sublists, [blocked('TODO')]).
+fibonacci_sublists([]).
+fibonacci_sublists([_, _]).
+fibonacci_sublists([_, _, _ | Rest]) :- 
+    fibonacci_sublists(Rest).
+fibonacci_sublists([First, Second, Third | Rest]) :-
+    length(First, FirstLength),
+    length(Second, SecondLength),
+    length(Third, ThirdLength),
+    ThirdLength is FirstLength + SecondLength,
+    fibonacci_sublists([Second, Third | Rest]).
+
+:-begin_tests(fibonacci_sublists, []).
 test(empty, [nondet]) :-
     fibonacci_sublists([]).
 test(zero, [nondet]) :-
@@ -129,9 +155,10 @@ test(four_start_22_fail, [fail]) :-
 % Key in association list Assoc.
 % *Restriction*: you may not use recursion.
 % *Hint* your solution should simply call a Prolog built-in.
-assoc_lookup(_Assoc, _Key, _Value) :- 'TODO'.
+assoc_lookup(Assoc, Key, Value) :-
+    member((Key, Value), Assoc).
 
-:-begin_tests(assoc_lookup, [blocked('TODO')]).
+:-begin_tests(assoc_lookup, []).
 test(empty, [fail]) :-
     assoc_lookup([], key, _Value).
 test(first, [nondet]) :-
@@ -169,9 +196,22 @@ test(unbound_key, [nondet]) :-
 % exercise and Prolog's built-ins atom(A) which succeeds if A is an
 % atom and integer(I) which succeeds if I is an integer.
 
-assoc_replace(_AtomIntList, _Assoc, _ListZ) :- 'TODO'.
+% assoc_replace(_AtomIntList, _Assoc, _ListZ) :- 'TODO'.
 
-:-begin_tests(assoc_replace, [blocked('TODO')]).
+assoc_replace([], _Assoc, []). % Base case: replacing an empty list results in an empty list.
+
+% If the head of AtomIntList is an atom, replace it with its corresponding value in Assoc.
+assoc_replace([Head | Tail], Assoc, [Value | TailZ]) :-
+    atom(Head), % Check if the head is an atom
+    assoc_lookup(Assoc, Head, Value), % Look up the value of the atom in the association list
+    assoc_replace(Tail, Assoc, TailZ). % Recursively process the tail of the list
+
+% If the head of AtomIntList is an integer, keep it unchanged.
+assoc_replace([Head | Tail], Assoc, [Head | TailZ]) :-
+    integer(Head), % Check if the head is an integer
+    assoc_replace(Tail, Assoc, TailZ). % Recursively process the tail of the list
+
+:-begin_tests(assoc_replace, []).
 test(empty, [nondet]) :-
     assoc_replace([], [(a,22), (b, 33), (c, 42)], Z),
     Z = [].
@@ -202,9 +242,13 @@ test(multi_fail, [fail]) :-
 % is the same as AddExpr with each add replaced by +.
 %
 % *Hint*: the Prolog built-in integer(I) succeeds iff I is an integer.
-add_to_plus_expr(_AddExprI, _PlusExpr) :- 'TODO'.
+% add_to_plus_expr(_AddExprI, _PlusExpr) :- 'TODO'.
 
-:-begin_tests(add_to_plus_expr, [blocked('TODO')]).
+add_to_plus_expr(Input, Input) :- integer(Input).
+
+add_to_plus_expr(add(ExprX, ExprY), ExprXExprZ + ExprYExprZ) :- add_to_plus_expr(ExprX, ExprXExprZ), add_to_plus_expr(ExprY, ExprYExprZ).
+
+:-begin_tests(add_to_plus_expr, []).
 test(int, [nondet]) :-
     add_to_plus_expr(42, Z), Z = 42.
 test(add_2_3, [nondet]) :-
@@ -253,9 +297,15 @@ test(rev_add_1_add_2_add_3_add_4_5, [nondet]) :-
 % + and * respectively.
 % It should be possible to run this procedure with either one or
 % both arguments instantiated.
-named_to_op_expr(_NamedExpr, _OpExpr) :- 'TODO'.
+% named_to_op_expr(_NamedExpr, _OpExpr) :- 'TODO'.
 
-:-begin_tests(named_to_op_expr, [blocked('TODO')]).
+named_to_op_expr(Input, Input) :- integer(Input).
+
+named_to_op_expr(add(ExprX, ExprY), ExprXExprZ + ExprYExprZ) :- named_to_op_expr(ExprX, ExprXExprZ), named_to_op_expr(ExprY, ExprYExprZ).
+
+named_to_op_expr(mul(ExprX, ExprY), ExprXExprZ * ExprYExprZ) :- named_to_op_expr(ExprX, ExprXExprZ), named_to_op_expr(ExprY, ExprYExprZ).
+
+:-begin_tests(named_to_op_expr, []).
 test(int, [nondet]) :-
     NamedExpr = 42, OpExpr = 42,
     named_to_op_expr(NamedExpr, Z),
@@ -404,9 +454,22 @@ test(rev_mul_add_1_2_mul_3_4, [nondet]) :-
 % should add its operands and mul should multiply them).
 %
 % *Hint*: combine your solution to the previous exercise with is/2.
-named_expr_eval(_NamedExpr, _Value) :- 'TODO'.
+% named_expr_eval(_NamedExpr, _Value) :- 'TODO'.
 
-:-begin_tests(named_expr_eval, [blocked('TODO')]).
+named_expr_eval(NamedExpr, Value) :-
+    (   integer(NamedExpr) -> % If NamedExpr is an integer, Value is the integer itself
+        Value = NamedExpr
+    ;   NamedExpr = add(X, Y) -> % If NamedExpr is of the form add(X, Y), recursively evaluate X and Y and sum them
+        named_expr_eval(X, XValue),
+        named_expr_eval(Y, YValue),
+        Value is XValue + YValue
+    ;   NamedExpr = mul(X, Y) -> % If NamedExpr is of the form mul(X, Y), recursively evaluate X and Y and multiply them
+        named_expr_eval(X, XValue),
+        named_expr_eval(Y, YValue),
+        Value is XValue * YValue
+    ).
+
+:-begin_tests(named_expr_eval, []).
 test(int, [nondet]) :-
     named_expr_eval(42, 42).
 
@@ -451,9 +514,24 @@ test(mul_add_1_2_mul_3_4, [nondet]) :-
 % a list of the tokens in NamedExpr in prefix notation.
 %
 % *Hint*: use append/3.
-named_expr_to_prefix_tokens(_NamedExpr, _PrefixTokens) :- 'TODO'.
+% named_expr_to_prefix_tokens(_NamedExpr, _PrefixTokens) :- 'TODO'.
 
-:-begin_tests(named_expr_to_prefix_tokens, [blocked('TODO')]).
+named_expr_to_prefix_tokens(NamedExpr, PrefixTokens) :-
+    (   integer(NamedExpr) -> % If NamedExpr is an integer, return a list containing only that integer
+        PrefixTokens = [NamedExpr]
+    ;   NamedExpr = add(X, Y) -> % If NamedExpr is of the form add(X, Y), recursively convert X and Y to prefix tokens and append them with 'add'
+        named_expr_to_prefix_tokens(X, XTokens),
+        named_expr_to_prefix_tokens(Y, YTokens),
+        append([add], XTokens, Temp),
+        append(Temp, YTokens, PrefixTokens)
+    ;   NamedExpr = mul(X, Y) -> % If NamedExpr is of the form mul(X, Y), recursively convert X and Y to prefix tokens and append them with 'mul'
+        named_expr_to_prefix_tokens(X, XTokens),
+        named_expr_to_prefix_tokens(Y, YTokens),
+        append([mul], XTokens, Temp),
+        append(Temp, YTokens, PrefixTokens)
+    ).
+
+:-begin_tests(named_expr_to_prefix_tokens, []).
 test(int, [nondet]) :-
     named_expr_to_prefix_tokens(42, [42]).
 
@@ -510,9 +588,24 @@ test(mul_add_1_2_mul_3_4, [nondet]) :-
 % *Restriction*: must be implemented using *only* earlier procedures;
 % cannot directly use recursion or Prolog built-ins.
 
-op_expr_to_prefix_tokens(_OpExpr, _PrefixTokens) :- 'TODO'.
+% op_expr_to_prefix_tokens(_OpExpr, _PrefixTokens) :- 'TODO'.
 
-:-begin_tests(op_expr_to_prefix_tokens, [blocked('TODO')]).
+op_expr_to_prefix_tokens(OpExpr, PrefixTokens) :-
+    (   integer(OpExpr) -> % If OpExpr is an integer, return a list containing only that integer
+        PrefixTokens = [OpExpr]
+    ;   OpExpr = +(X, Y) -> % If OpExpr is of the form +(X, Y), recursively convert X and Y to prefix tokens and append them with '+'
+        named_expr_to_prefix_tokens(X, XTokens),
+        named_expr_to_prefix_tokens(Y, YTokens),
+        append([+], XTokens, Temp),
+        append(Temp, YTokens, PrefixTokens)
+    ;   OpExpr = *(X, Y) -> % If OpExpr is of the form *(X, Y), recursively convert X and Y to prefix tokens and append them with '*'
+        named_expr_to_prefix_tokens(X, XTokens),
+        named_expr_to_prefix_tokens(Y, YTokens),
+        append([*], XTokens, Temp),
+        append(Temp, YTokens, PrefixTokens)
+    ).
+
+:-begin_tests(op_expr_to_prefix_tokens, []).
 test(int, [nondet]) :-
     op_expr_to_prefix_tokens(42, [42]).
 
